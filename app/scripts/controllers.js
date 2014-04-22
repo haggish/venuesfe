@@ -20,7 +20,7 @@ angular.module('spree.controllers', [ 'ngSanitize' ]).
             $scope.events = valuesFrom(events);
             repo.venues().then(function (venues) {
                 $scope.venues = valuesFrom(venues, function (venue) {
-                    return events[venue.message] != undefined;
+                    return events[venue.title] != undefined;
                 });
             })
         });

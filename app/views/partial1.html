@@ -2,8 +2,8 @@
     <div class="row">
         <div class="col-md-4">
             <accordion close-others="true">
-                <accordion-group ng-repeat="event in events" heading="{{event.venue()}}">
-                    <p ng-bind-html="event.desc()"></p>
+                <accordion-group ng-repeat="event in events" heading="{{event.venue}}">
+                    <p ng-bind-html="event.desc"></p>
                 </accordion-group>
             </accordion>
         </div>
