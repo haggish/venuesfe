@@ -13,28 +13,59 @@ angular.module('spree.controllers', [ 'ngSanitize' ]).
             defaults: {
                 scrollWheelZoom: false
             },
-            venues: []
+            venuesOfEvents: {},
+            date: new Date()
         });
 
         repo.events().then(function (events) {
-            $scope.events = valuesFrom(events);
+            $scope.events = events;
+            $scope.eventsAt = function (date) {
+                return $scope.events.filter(function (event) {
+                    var eventDate = new Date(event.date);
+                    return eventDate.getFullYear() == date.getFullYear() &&
+                        eventDate.getMonth() == date.getMonth() &&
+                        eventDate.getDate() == date.getDate();
+                })
+            };
             repo.venues().then(function (venues) {
-                $scope.venues = valuesFrom(venues, function (venue) {
-                    return events[venue.title] != undefined;
-                });
+                $scope.venues = venues;
+                refreshVenues();
+                $scope.$watch('date', function (newValue, oldValue) {
+                    refreshVenues();
+                })
             })
         });
 
-        function valuesFrom(map, predicate) {
-            var valuelist = [];
-            for (var value in map) {
-                if (map.hasOwnProperty(value)) {
-                    if (predicate == undefined || (predicate(map[value]))) {
-                        valuelist.push(map[value]);
+        function refreshVenues() {
+            clearVenues();
+            initVenuesToChosenDate();
+
+            function clearVenues() {
+                for (var venue in $scope.venuesOfEvents) {
+                    if ($scope.venuesOfEvents.hasOwnProperty(venue)) {
+                        delete $scope.venuesOfEvents[venue];
                     }
                 }
             }
-            return valuelist;
+
+            function initVenuesToChosenDate() {
+                var venuesAtDate =
+                    $scope.eventsAt($scope.date)
+                        .filter(function (event) {
+                            var venueForEvent =
+                                $scope.venues[event.venue] !== undefined;
+                            if (!venueForEvent) {
+                                console.log(event.venue + " not found");
+                            }
+                            return venueForEvent;
+                        })
+                        .map(function (event) {
+                            return $scope.venues[event.venue];
+                        });
+                venuesAtDate.forEach(function (event) {
+                    $scope.venuesOfEvents[event.id] = event;
+                });
+            }
         }
     }])
     .controller('MyCtrl2', ['$scope', function ($scope) {

@@ -19,11 +19,11 @@ angular.module('spree.services', [])
             };
 
             this.events = function () {
-                var deferred = $q.defer(), ret = {};
+                var deferred = $q.defer(), ret = [];
                 $http.get('http://localhost:3000/events')
                     .then(function (response) {
                         response.data.events.forEach(function (event) {
-                            ret[event.venue] = event;
+                            ret.push(event);
                         });
                         deferred.resolve(ret);
                     });
