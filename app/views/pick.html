@@ -7,7 +7,7 @@
                 </div>
             </div>
             <accordion close-others="true">
-                <accordion-group ng-repeat="event in eventsAt(date)" heading="{{event.venue}}">
+                <accordion-group ng-repeat="event in eventsAt(date)" heading="{{event.hours()}}: {{event.venue}}">
                     <p ng-bind-html="event.desc"></p>
                 </accordion-group>
             </accordion>

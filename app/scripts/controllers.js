@@ -25,7 +25,26 @@ angular.module('spree.controllers', [ 'ngSanitize' ]).
                     return eventDate.getFullYear() == date.getFullYear() &&
                         eventDate.getMonth() == date.getMonth() &&
                         eventDate.getDate() == date.getDate();
-                })
+                }).map(function (event) {
+                    var startDate = new Date(event.start);
+                    event.startHours = startDate.getHours();
+                    event.hours = function () {
+                        return hour(startDate) + '-' +
+                            hour(new Date(event.end));
+                    };
+                    function hour(dateWithHour) {
+                        return dateWithHour.getHours() + '.' +
+                            (dateWithHour.getMinutes() < 10 ?
+                                ('0' + dateWithHour.getMinutes()) :
+                                dateWithHour.getMinutes());
+                    }
+
+                    return event;
+                }).sort(function (e1, e2) {
+                    console.log(e1.venue + '/' + e2.venue + ': ' +
+                        e1.startHours + '/' + e2.startHours);
+                    return e1.startHours - e2.startHours;
+                });
             };
             repo.venues().then(function (venues) {
                 $scope.venues = venues;
