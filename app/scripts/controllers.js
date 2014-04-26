@@ -21,7 +21,7 @@ angular.module('spree.controllers', [ 'ngSanitize' ]).
             $scope.events = events;
             $scope.eventsAt = function (date) {
                 return $scope.events.filter(function (event) {
-                    var eventDate = new Date(event.date);
+                    var eventDate = new Date(event.start);
                     return eventDate.getFullYear() == date.getFullYear() &&
                         eventDate.getMonth() == date.getMonth() &&
                         eventDate.getDate() == date.getDate();
