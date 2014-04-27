@@ -19,6 +19,7 @@ angular.module('spree.controllers', [ 'ngSanitize' ]).
 
         repo.events().then(function (events) {
             $scope.events = events;
+            $scope.eventsByIDs = {};
             $scope.eventsAt = function (date) {
                 return $scope.events.filter(function (event) {
                     var eventDate = new Date(event.start);
@@ -27,11 +28,13 @@ angular.module('spree.controllers', [ 'ngSanitize' ]).
                         eventDate.getDate() == date.getDate();
                 }).map(function (event) {
                     var startDate = new Date(event.start);
+                    event.inTour = false;
                     event.startHours = startDate.getHours();
                     event.hours = function () {
                         return hour(startDate) + '-' +
                             hour(new Date(event.end));
                     };
+                    $scope.eventsByIDs[event.id] = event;
                     function hour(dateWithHour) {
                         return dateWithHour.getHours() + '.' +
                             (dateWithHour.getMinutes() < 10 ?

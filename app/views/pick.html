@@ -8,7 +8,8 @@
                     </div>
                 </div>
                 <div id="events" ng-repeat="event in eventsAt(date)">
-                    <input type="checkbox" id="event{{event.id}}">
+                    <input type="checkbox" id="event{{event.id}}"
+                           ng-bind="eventsByIDs.{{event.id}}.inTour">
                     <label for="event{{event.id}}"
                            tooltip-html-unsafe="{{event.desc}}">
                         <small>{{event.hours()}}: {{event.venue}}</small></label>
