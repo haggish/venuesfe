@@ -41,8 +41,6 @@ angular.module('spree.controllers', [ 'ngSanitize' ]).
 
                     return event;
                 }).sort(function (e1, e2) {
-                    console.log(e1.venue + '/' + e2.venue + ': ' +
-                        e1.startHours + '/' + e2.startHours);
                     return e1.startHours - e2.startHours;
                 });
             };

@@ -1,16 +1,20 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-4">
-            <div style="display:inline-block; min-height:290px;">
-                <div class="well well-sm" ng-model="date">
-                    <datepicker min="today" starting-day="1"></datepicker>
+            <form role="form">
+                <div class="form-group" style="display:inline-block; min-height:290px;">
+                    <div class="well well-sm" ng-model="date">
+                        <datepicker min="today" starting-day="1"></datepicker>
+                    </div>
                 </div>
-            </div>
-            <accordion close-others="true">
-                <accordion-group ng-repeat="event in eventsAt(date)" heading="{{event.hours()}}: {{event.venue}}">
-                    <p ng-bind-html="event.desc"></p>
-                </accordion-group>
-            </accordion>
+                <div id="events" ng-repeat="event in eventsAt(date)">
+                    <input type="checkbox" id="event{{event.id}}">
+                    <label for="event{{event.id}}"
+                           tooltip-html-unsafe="{{event.desc}}">
+                        <small>{{event.hours()}}: {{event.venue}}</small></label>
+                </div>
+                <button type="submit" class="btn btn-default">Route</button>
+            </form>
         </div>
         <div class="col-md-8">
             <leaflet center="center" markers="venuesOfEvents" paths="paths"
