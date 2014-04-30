@@ -14,8 +14,20 @@ angular.module('spree.controllers', [ 'ngSanitize' ]).
                 scrollWheelZoom: false
             },
             venuesOfEvents: {},
-            date: new Date()
+            date: new Date(),
+            events: {
+                map: {
+                    enable: ['click'],
+                    logic: 'emit'
+                }
+            }
         });
+
+        $scope.$on('leafletDirectiveMarker.click',
+            function (event, leafletEvent) {
+                console.log("selected " + leafletEvent.markerName);
+                $scope.selectedVenue = leafletEvent.markerName;
+            });
 
         repo.events().then(function (events) {
             $scope.events = events;
@@ -50,9 +62,8 @@ angular.module('spree.controllers', [ 'ngSanitize' ]).
             repo.venues().then(function (venues) {
                 $scope.venues = venues;
                 refreshVenues();
-                $scope.$watch('date', function (newValue, oldValue) {
-                    refreshVenues();
-                })
+                $scope.$watch('date', refreshVenues);
+                $scope.$watch('selectedVenue', refreshVenues);
             })
         });
 
@@ -72,15 +83,17 @@ angular.module('spree.controllers', [ 'ngSanitize' ]).
                 var venuesAtDate =
                     $scope.eventsAt($scope.date)
                         .filter(function (event) {
-                            var venueForEvent =
+                            var venueExistsForEvent =
                                 $scope.venues[event.venue] !== undefined;
-                            if (!venueForEvent) {
+                            if (!venueExistsForEvent) {
                                 console.log(event.venue + " not found");
                             }
-                            return venueForEvent;
+                            return venueExistsForEvent;
                         })
                         .map(function (event) {
-                            return $scope.venues[event.venue];
+                            var venue = $scope.venues[event.venue];
+                            event.venueID = venue.id;
+                            return venue;
                         });
                 venuesAtDate.forEach(function (event) {
                     $scope.venuesOfEvents[event.id] = event;
