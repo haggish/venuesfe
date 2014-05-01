@@ -17,16 +17,21 @@ angular.module('spree.controllers', [ 'ngSanitize' ]).
             date: new Date(),
             events: {
                 map: {
-                    enable: ['click'],
+                    enable: ['mouseover', 'mouseout'],
                     logic: 'emit'
                 }
             }
         });
 
-        $scope.$on('leafletDirectiveMarker.click',
+        $scope.$on('leafletDirectiveMarker.mouseover',
             function (event, leafletEvent) {
-                console.log("selected " + leafletEvent.markerName);
+                console.log("hovered on " + leafletEvent.markerName);
                 $scope.selectedVenue = leafletEvent.markerName;
+            });
+
+        $scope.$on('leafletDirectiveMarker.mouseout',
+            function (event, leafletEvent) {
+                $scope.selectedVenue = null;
             });
 
         repo.events().then(function (events) {
