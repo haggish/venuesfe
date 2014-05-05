@@ -4,6 +4,7 @@
 
 angular.module('spree.controllers', [ 'ngSanitize' ]).
     controller('Planner', ['$scope', 'repo', function ($scope, repo) {
+
         angular.extend($scope, {
             center: {
                 lat: 52.5167,
@@ -34,6 +35,16 @@ angular.module('spree.controllers', [ 'ngSanitize' ]).
                 $scope.selectedVenue = null;
             });
 
+        $scope.goToRoute = function() {
+            for (var venue in $scope.venuesOfEvents) {
+                if ($scope.venuesOfEvents.hasOwnProperty(venue)) {
+                    if ($scope.venuesOfEvents[venue].inTour === true) {
+                        console.log('Venue ' + venue + ' selected');
+                    }
+                }
+            }
+        };
+
         repo.events().then(function (events) {
             $scope.events = events;
             $scope.eventsByIDs = {};
@@ -45,7 +56,6 @@ angular.module('spree.controllers', [ 'ngSanitize' ]).
                         eventDate.getDate() == date.getDate();
                 }).map(function (event) {
                     var startDate = new Date(event.start);
-                    event.inTour = false;
                     event.startHours = startDate.getHours();
                     event.hours = function () {
                         return hour(startDate) + '-' +
@@ -97,11 +107,12 @@ angular.module('spree.controllers', [ 'ngSanitize' ]).
                         })
                         .map(function (event) {
                             var venue = $scope.venues[event.venue];
+                            venue.inTour = false;
                             event.venueID = venue.id;
                             return venue;
                         });
-                venuesAtDate.forEach(function (event) {
-                    $scope.venuesOfEvents[event.id] = event;
+                venuesAtDate.forEach(function (venue) {
+                    $scope.venuesOfEvents[venue.id] = venue;
                 });
             }
         }

@@ -1,7 +1,7 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-4">
-            <form role="form">
+            <form role="form" ng-submit="goToRoute()">
                 <div class="form-group"
                      style="display:inline-block; min-height:200px;">
                     <div class="well well-sm" ng-model="date">
@@ -12,7 +12,7 @@
                     <tr ng-repeat="event in eventsAt(date)"
                         ng-class="{'eventMapMouseOver': selectedVenue != undefined && event.venueID == selectedVenue}"><td>
                         <input type="checkbox" id="event{{event.id}}"
-                               ng-bind="eventsByIDs[{{event.id}}].inTour">
+                               ng-model="venuesOfEvents[event.venueID].inTour">
                         <label for="event{{event.id}}"
                                tooltip-html-unsafe="{{event.desc}}">
                             <small>{{event.hours()}}: {{event.venue}}
