@@ -2,8 +2,8 @@
 
 /* Controllers */
 
-angular.module('spree.controllers', [ 'ngSanitize' ]).
-    controller('Planner', ['$scope', 'repo', function ($scope, repo) {
+angular.module('spree.controllers', [ 'ngSanitize' ])
+    .controller('Planner', ['$scope', 'repo', function ($scope, repo) {
 
         angular.extend($scope, {
             center: {
@@ -21,17 +21,17 @@ angular.module('spree.controllers', [ 'ngSanitize' ]).
                     logic: 'emit'
                 }
             },
-            venues: { "loading" : true }
+            venues: { 'loading': true }
         });
 
         $scope.$on('leafletDirectiveMarker.mouseover',
             function (event, leafletEvent) {
-                console.log("hovered on " + leafletEvent.markerName);
+                console.log('hovered on ' + leafletEvent.markerName);
                 $scope.selectedVenue = leafletEvent.markerName;
             });
 
         $scope.$on('leafletDirectiveMarker.mouseout',
-            function (event, leafletEvent) {
+            function () {
                 $scope.selectedVenue = null;
             });
 
@@ -48,9 +48,9 @@ angular.module('spree.controllers', [ 'ngSanitize' ]).
         $scope.atChosenDate = function (event) {
             var eventDate = new Date(event.start);
             var date = $scope.date;
-            return eventDate.getFullYear() == date.getFullYear() &&
-                eventDate.getMonth() == date.getMonth() &&
-                eventDate.getDate() == date.getDate();
+            return eventDate.getFullYear() === date.getFullYear() &&
+                eventDate.getMonth() === date.getMonth() &&
+                eventDate.getDate() === date.getDate();
         };
 
         repo.events().then(function (events) {
@@ -71,5 +71,5 @@ angular.module('spree.controllers', [ 'ngSanitize' ]).
         });
     }])
     .controller('MyCtrl2', ['$scope', function ($scope) {
-
+        $scope.todo = true;
     }]);

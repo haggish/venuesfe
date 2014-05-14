@@ -6,7 +6,7 @@ angular.module('spree.filters', [])
     .filter('interpolate', ['version', function (version) {
         return function (text) {
             return String(text).replace(/\%VERSION\%/mg, version);
-        }
+        };
     }])
     .filter('ofEventsAt', function () {
         var markerObjects = {}, nothing = [];

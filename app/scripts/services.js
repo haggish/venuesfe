@@ -31,18 +31,20 @@ angular.module('spree.services', [])
             return angular.extend(extension, data);
         };
 
+        var self = this;
+
         function happensAt(date) {
-            var eventDate = new Date(this.start);
-            return eventDate.getFullYear() == date.getFullYear() &&
-                eventDate.getMonth() == date.getMonth() &&
-                eventDate.getDate() == date.getDate();
+            var eventDate = new Date(self.start);
+            return eventDate.getFullYear() === date.getFullYear() &&
+                eventDate.getMonth() === date.getMonth() &&
+                eventDate.getDate() === date.getDate();
         }
 
         function hasEventAt(date) {
-            if (this.events === undefined) {
+            if (self.events === undefined) {
                 return false;
             }
-            return this.events.filter(function (event) {
+            return self.events.filter(function (event) {
                 return event.happensAt(date);
             }).length > 0;
         }
