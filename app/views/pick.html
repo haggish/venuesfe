@@ -9,10 +9,10 @@
                     </div>
                 </div>
                 <table class="table table-condensed table-hover" id="events">
-                    <tr ng-repeat="event in eventsAt(date)"
+                    <tr ng-repeat="event in events | filter: atChosenDate"
                         ng-class="{'eventMapMouseOver': selectedVenue != undefined && event.venueID == selectedVenue}"><td>
                         <input type="checkbox" id="event{{event.id}}"
-                               ng-model="venuesOfEvents[event.venueID].inTour">
+                               ng-model="venues[event.venueID].inTour">
                         <label for="event{{event.id}}"
                                tooltip-html-unsafe="{{event.desc}}">
                             <small>{{event.hours()}}: {{event.venue}}
@@ -24,7 +24,8 @@
             </form>
         </div>
         <div class="col-md-8">
-            <leaflet center="center" markers="venuesOfEvents" paths="paths"
+            <leaflet center="center"
+                     markers="venues | ofEventsAt:date" paths="paths"
                      width="640px" height="480px">Map goes here
             </leaflet>
         </div>

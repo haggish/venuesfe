@@ -14,14 +14,14 @@ angular.module('spree.controllers', [ 'ngSanitize' ]).
             defaults: {
                 scrollWheelZoom: false
             },
-            venuesOfEvents: {},
             date: new Date(),
             events: {
                 map: {
                     enable: ['mouseover', 'mouseout'],
                     logic: 'emit'
                 }
-            }
+            },
+            venues: { "loading" : true }
         });
 
         $scope.$on('leafletDirectiveMarker.mouseover',
@@ -35,87 +35,40 @@ angular.module('spree.controllers', [ 'ngSanitize' ]).
                 $scope.selectedVenue = null;
             });
 
-        $scope.goToRoute = function() {
-            for (var venue in $scope.venuesOfEvents) {
-                if ($scope.venuesOfEvents.hasOwnProperty(venue)) {
-                    if ($scope.venuesOfEvents[venue].inTour === true) {
+        $scope.goToRoute = function () {
+            for (var venue in $scope.venues) {
+                if ($scope.venues.hasOwnProperty(venue)) {
+                    if ($scope.venues[venue].inTour === true) {
                         console.log('Venue ' + venue + ' selected');
                     }
                 }
             }
         };
 
+        $scope.atChosenDate = function (event) {
+            var eventDate = new Date(event.start);
+            var date = $scope.date;
+            return eventDate.getFullYear() == date.getFullYear() &&
+                eventDate.getMonth() == date.getMonth() &&
+                eventDate.getDate() == date.getDate();
+        };
+
         repo.events().then(function (events) {
             $scope.events = events;
-            $scope.eventsByIDs = {};
-            $scope.eventsAt = function (date) {
-                return $scope.events.filter(function (event) {
-                    var eventDate = new Date(event.start);
-                    return eventDate.getFullYear() == date.getFullYear() &&
-                        eventDate.getMonth() == date.getMonth() &&
-                        eventDate.getDate() == date.getDate();
-                }).map(function (event) {
-                    var startDate = new Date(event.start);
-                    event.startHours = startDate.getHours();
-                    event.hours = function () {
-                        return hour(startDate) + '-' +
-                            hour(new Date(event.end));
-                    };
-                    $scope.eventsByIDs[event.id] = event;
-                    function hour(dateWithHour) {
-                        return dateWithHour.getHours() + '.' +
-                            (dateWithHour.getMinutes() < 10 ?
-                                ('0' + dateWithHour.getMinutes()) :
-                                dateWithHour.getMinutes());
-                    }
-
-                    return event;
-                }).sort(function (e1, e2) {
-                    return e1.startHours - e2.startHours;
-                });
-            };
             repo.venues().then(function (venues) {
-                $scope.venues = venues;
-                refreshVenues();
-                $scope.$watch('date', refreshVenues);
-                $scope.$watch('selectedVenue', refreshVenues);
-            })
-        });
-
-        function refreshVenues() {
-            clearVenues();
-            initVenuesToChosenDate();
-
-            function clearVenues() {
-                for (var venue in $scope.venuesOfEvents) {
-                    if ($scope.venuesOfEvents.hasOwnProperty(venue)) {
-                        delete $scope.venuesOfEvents[venue];
+                angular.copy(venues, $scope.venues);
+                events.forEach(function (event) {
+                    var venue = $scope.venues[event.venueID];
+                    if (venue !== undefined) {
+                        if (venue.events === undefined) {
+                            venue.events = [];
+                        }
+                        venue.events.push(event);
                     }
-                }
-            }
-
-            function initVenuesToChosenDate() {
-                var venuesAtDate =
-                    $scope.eventsAt($scope.date)
-                        .filter(function (event) {
-                            var venueExistsForEvent =
-                                $scope.venues[event.venue] !== undefined;
-                            if (!venueExistsForEvent) {
-                                console.log(event.venue + " not found");
-                            }
-                            return venueExistsForEvent;
-                        })
-                        .map(function (event) {
-                            var venue = $scope.venues[event.venue];
-                            venue.inTour = false;
-                            event.venueID = venue.id;
-                            return venue;
-                        });
-                venuesAtDate.forEach(function (venue) {
-                    $scope.venuesOfEvents[venue.id] = venue;
                 });
-            }
-        }
+                delete($scope.venues.loading);
+            });
+        });
     }])
     .controller('MyCtrl2', ['$scope', function ($scope) {
 
