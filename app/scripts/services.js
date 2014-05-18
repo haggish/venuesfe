@@ -31,20 +31,18 @@ angular.module('spree.services', [])
             return angular.extend(extension, data);
         };
 
-        var self = this;
-
         function happensAt(date) {
-            var eventDate = new Date(self.start);
+            var eventDate = new Date(this.start);
             return eventDate.getFullYear() === date.getFullYear() &&
                 eventDate.getMonth() === date.getMonth() &&
                 eventDate.getDate() === date.getDate();
         }
 
         function hasEventAt(date) {
-            if (self.events === undefined) {
+            if (this.events === undefined) {
                 return false;
             }
-            return self.events.filter(function (event) {
+            return this.events.filter(function (event) {
                 return event.happensAt(date);
             }).length > 0;
         }
