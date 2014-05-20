@@ -4,12 +4,12 @@
 // Declare app level module which depends on filters, and services
 angular.module('spree', [
     'ngRoute',
+    'google-maps',
     'spree.filters',
     'spree.services',
     'spree.directives',
     'spree.controllers',
-    'ui.bootstrap',
-    'leaflet-directive'
+    'ui.bootstrap'
 ]).
     config(['$routeProvider', function ($routeProvider) {
         $routeProvider.when('/pick', {templateUrl: '../views/pick.html',

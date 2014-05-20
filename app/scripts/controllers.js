@@ -2,38 +2,45 @@
 
 /* Controllers */
 
-angular.module('spree.controllers', [ 'ngSanitize' ])
+angular.module('spree.controllers', [ 'spree.filters', 'ngSanitize' ])
     .controller('Planner', ['$scope', 'repo', function ($scope, repo) {
 
         angular.extend($scope, {
-            center: {
-                lat: 52.5167,
-                lng: 13.3833,
-                zoom: 12
-            },
-            defaults: {
-                scrollWheelZoom: false
-            },
-            date: new Date(),
-            events: {
-                map: {
-                    enable: ['mouseover', 'mouseout'],
-                    logic: 'emit'
+            map: {
+                center: {
+                    latitude: 52.5167,
+                    longitude: 13.3833
+                },
+                zoom: 12,
+                ctrl: {},
+                events: {
+                    'mouseover': function (map, event, marker) {
+                        $scope.selectedVenue = marker.id;
+                        $scope.$apply();
+                    },
+                    'mouseout': function () {
+                        $scope.selectedVenue = null;
+                        $scope.$apply();
+                    }
                 }
             },
-            venues: { 'loading': true }
+            date: new Date(),
+            venues: {},
+            venuesOfEventsAt: { 'loading': true },
+            markers: []
         });
 
-        $scope.$on('leafletDirectiveMarker.mouseover',
-            function (event, leafletEvent) {
-                console.log('hovered on ' + leafletEvent.markerName);
-                $scope.selectedVenue = leafletEvent.markerName;
-            });
 
-        $scope.$on('leafletDirectiveMarker.mouseout',
-            function () {
-                $scope.selectedVenue = null;
-            });
+        $scope.$watch('date', function () {
+            if ($scope.venuesOfEventsAt.loading === undefined) {
+                $scope.markers =
+                    $scope.venuesOfEventsAt[$scope.selectedDate()];
+            }
+        });
+
+        $scope.selectedDate = function () {
+            return $scope.date.toDateString();
+        };
 
         $scope.goToRoute = function () {
             for (var venue in $scope.venues) {
@@ -57,17 +64,32 @@ angular.module('spree.controllers', [ 'ngSanitize' ])
             $scope.events = events;
             repo.venues().then(function (venues) {
                 angular.copy(venues, $scope.venues);
-                events.forEach(function (event) {
-                    var venue = $scope.venues[event.venueID];
-                    if (venue !== undefined) {
-                        if (venue.events === undefined) {
-                            venue.events = [];
+                addEventsTo(venues);
+                $scope.markers =
+                    $scope.venuesOfEventsAt[$scope.selectedDate()];
+            });
+
+            function addEventsTo(venues) {
+                $scope.events.forEach(function (event) {
+                    if (event.venueID !== undefined) {
+                        var venue = venues[event.venueID + ''];
+                        if (venue !== undefined) {
+                            if (venue.events === undefined) {
+                                venue.events = [];
+                            }
+                            var dateString = event.startDate.toDateString();
+                            if ($scope.venuesOfEventsAt[dateString] === undefined) {
+                                $scope.venuesOfEventsAt[dateString] = [];
+                            }
+                            venue.latitude = venue.lat;
+                            venue.longitude = venue.lng;
+                            $scope.venuesOfEventsAt[dateString].push(venue);
+                            venue.events.push(event);
                         }
-                        venue.events.push(event);
                     }
                 });
-                delete($scope.venues.loading);
-            });
+                delete $scope.venuesOfEventsAt.loading;
+            }
         });
     }])
     .controller('MyCtrl2', ['$scope', function ($scope) {

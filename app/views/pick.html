@@ -24,10 +24,10 @@
             </form>
         </div>
         <div class="col-md-8">
-            <leaflet center="center"
-                     markers="venues | ofEventsAt:date" paths="paths"
-                     width="640px" height="480px">Map goes here
-            </leaflet>
+            <google-map center="map.center" zoom="map.zoom" control="map.ctrl">
+                <markers events="map.events" models="markers"
+                         coords="'self'" doRebuildAll="true"></markers>
+            </google-map>
         </div>
     </div>
 </div>

@@ -22,6 +22,7 @@ angular.module('spree.services', [])
         this.event = function (data) {
             var extension = {};
             var startDate = new Date(data.start);
+            extension.startDate = startDate;
             extension.startHours = startDate.getHours();
             extension.hours = function () {
                 return time.hour(startDate) + '-' +

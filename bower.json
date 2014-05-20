@@ -11,9 +11,8 @@
     "angular-cookies": "1.2.15",
     "angular-sanitize": "1.2.15",
     "angular-route": "1.2.15",
-    "leaflet-0.7.2": "http://leaflet-cdn.s3.amazonaws.com/build/leaflet-0.7.2.zip",
-    "angular-leaflet": "~0.7.6",
-    "angular-bootstrap": "~0.10.0"
+    "angular-bootstrap": "~0.10.0",
+    "angular-google-maps": "1.1.0"
   },
   "devDependencies": {
     "angular-mocks": "1.2.15",
